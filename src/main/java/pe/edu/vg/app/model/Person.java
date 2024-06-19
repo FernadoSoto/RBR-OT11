@@ -1,42 +1,38 @@
 package pe.edu.vg.app.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
-
-@Data
 @Entity
 @Table(name = "Person")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Person {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "PersonID")
     private Long personID;
 
-    @Column(name = "Name", nullable = false)
+    @Column(name = "Name", nullable = false, length = 50)
     private String name;
 
-    @Column(name = "LastName", nullable = false)
+    @Column(name = "Last_Name", nullable = false, length = 50)
     private String lastName;
 
-    @Column(name = "DocumentType", nullable = false)
+    @Column(name = "Document_Type", nullable = false, length = 3)
     private String documentType;
 
-    @Column(name = "DocumentNumber", nullable = false)
+    @Column(name = "Document_Number", nullable = false, length = 20)
     private String documentNumber;
 
-    @Column(name = "Phone", nullable = false)
+    @Column(name = "Phone", length = 9)
     private String phone;
 
-    @Column(name = "Status", nullable = false, columnDefinition = "NVARCHAR2(8) DEFAULT 'active'")
-    private String status;
+    @Column(name = "Status", nullable = false, length = 8)
+    private String status = "activo";
 
-    @Column(name = "Role", nullable = false)
+    @Column(name = "Role", nullable = false, length = 10)
     private String role;
 }

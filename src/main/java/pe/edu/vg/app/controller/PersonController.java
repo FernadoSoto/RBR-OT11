@@ -1,61 +1,51 @@
 package pe.edu.vg.app.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import pe.edu.vg.app.model.Person;
 import pe.edu.vg.app.service.PersonService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
-import java.util.Optional;
 
 @CrossOrigin
 @RestController
 @RequestMapping("/api/persons")
 public class PersonController {
 
-    private final PersonService personService;
-
     @Autowired
-    public PersonController(PersonService personService) {
-        this.personService = personService;
-    }
+    private PersonService personService;
 
     @GetMapping
-    public ResponseEntity<List<Person>> getAllPersons() {
-        List<Person> persons = personService.getAllPersons();
-        return new ResponseEntity<>(persons, HttpStatus.OK);
+    public List<Person> getAllPersons() {
+        return personService.getAllPersons();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Person> getPersonById(@PathVariable Long id) {
-        Optional<Person> person = personService.getPersonById(id);
-        return person.map(value -> new ResponseEntity<>(value, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return personService.getPersonById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<Person> createPerson(@RequestBody Person person) {
-        Person createdPerson = personService.createPerson(person);
-        return new ResponseEntity<>(createdPerson, HttpStatus.CREATED);
+    public Person createPerson(@RequestBody Person person) {
+        return personService.createPerson(person);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Person> updatePerson(@PathVariable Long id, @RequestBody Person updatedPerson) {
-        Person person = personService.updatePerson(id, updatedPerson);
-        if (person != null) {
-            return new ResponseEntity<>(person, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<Person> updatePerson(@PathVariable Long id, @RequestBody Person personDetails) {
+        return ResponseEntity.ok(personService.updatePerson(id, personDetails));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePerson(@PathVariable Long id) {
-        boolean deleted = personService.deletePerson(id);
-        if (deleted) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        personService.deletePerson(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<Person> changeStatus(@PathVariable Long id, @RequestBody String status) {
+        return ResponseEntity.ok(personService.changeStatus(id, status));
     }
 }

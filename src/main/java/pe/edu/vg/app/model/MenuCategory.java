@@ -1,28 +1,26 @@
 package pe.edu.vg.app.model;
 
-
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-@Data
+import jakarta.persistence.*;
+
 @Entity
-@Table(name = "MenuCategory")
+@Table(name = "Menu_Category")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class MenuCategory {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CategoryID")
     private Long categoryID;
 
-    @Column(name = "CategoryName", length = 50)
+    @Column(name = "Category_Name", nullable = false, length = 50)
     private String categoryName;
 
-    @Column(name = "Status", length = 8, columnDefinition = "NVARCHAR2(8) DEFAULT 'active'")
-    private String status;
-}
+    @Column(name = "Status", nullable = false, length = 8)
+    private String status = "activo";
 
+}

@@ -1,9 +1,10 @@
 package pe.edu.vg.app.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import pe.edu.vg.app.model.Person;
 import pe.edu.vg.app.repository.PersonRepository;
+import pe.edu.vg.app.exception.ResourceNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,12 +12,8 @@ import java.util.Optional;
 @Service
 public class PersonService {
 
-    private final PersonRepository personRepository;
-
     @Autowired
-    public PersonService(PersonRepository personRepository) {
-        this.personRepository = personRepository;
-    }
+    private PersonRepository personRepository;
 
     public List<Person> getAllPersons() {
         return personRepository.findAll();
@@ -30,21 +27,28 @@ public class PersonService {
         return personRepository.save(person);
     }
 
-    public Person updatePerson(Long id, Person updatedPerson) {
-        if (personRepository.existsById(id)) {
-            updatedPerson.setPersonID(id);
-            return personRepository.save(updatedPerson);
-        } else {
-            return null; // or throw an exception
-        }
+    public Person updatePerson(Long id, Person personDetails) {
+        Person person = personRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Person", "id", id));
+        
+        person.setName(personDetails.getName());
+        person.setLastName(personDetails.getLastName());
+        person.setDocumentType(personDetails.getDocumentType());
+        person.setDocumentNumber(personDetails.getDocumentNumber());
+        person.setPhone(personDetails.getPhone());
+        person.setRole(personDetails.getRole());
+        person.setStatus(personDetails.getStatus());
+
+        return personRepository.save(person);
     }
 
-    public boolean deletePerson(Long id) {
-        if (personRepository.existsById(id)) {
-            personRepository.deleteById(id);
-            return true;
-        } else {
-            return false;
-        }
+    public void deletePerson(Long id) {
+        Person person = personRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Person", "id", id));
+        personRepository.delete(person);
+    }
+
+    public Person changeStatus(Long id, String status) {
+        Person person = personRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Person", "id", id));
+        person.setStatus(status);
+        return personRepository.save(person);
     }
 }
